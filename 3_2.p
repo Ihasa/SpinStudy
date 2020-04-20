@@ -16,6 +16,13 @@ proctype Target(chan c){ /* 引数付きプロセス */
 proctype P(){
     do
     :: to_pr!Get; to_sc!Get->
+    progress:   /* 進行性解析のためのラベル */
+                /* 常に通過してほしいところに置く */
+                /* progressを接頭辞とした任意の文字列 */
+                /* 検証器はループ解析なるものを行い、 */
+                /* このラベルが含まれないような状態遷移ループを検出してエラーとする */
+                /* 複数のラベルを置いた場合、論理和になる */
+                /* 言い換えると「どれか1つのprogressラベルさえ通れば、エラー発生なしとする」ということ */
     skip;
     to_pr!Put;to_sc!Put;
     od 
@@ -24,7 +31,9 @@ proctype P(){
 /* 利用者 スキャナを先に確保する */
 proctype Q(){
     do
-    :: to_sc!Get; to_pr!Get->
+    :: to_pr!Get; to_sc!Get->
+    /* progress: */ /* これを書いてしまうとライブロックが検知できなくなる */
+                    /* Qが実行し続けるループは正としてしまうため */
     skip;
     to_pr!Put;to_sc!Put;
     od 
