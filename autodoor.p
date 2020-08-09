@@ -5,7 +5,7 @@ mtype = {TIME_SPEND, MAN_DETECT}
 chan c = [0] of {mtype};
 
 #define p ((doorState == OPENING))
-#define q ((doorState == CLOSED) && (envState == PASSING))
+#define q ((doorState == OPENED))
 
 mtype envState=PASSED;
 mtype doorState = CLOSED;
@@ -27,9 +27,9 @@ active proctype Door() {
         ::(doorState == CLOSING) && (ev == TIME_SPEND)->
             doorState = CLOSED;
             printf("door=CLOSED\n");
-        // ::(doorState == CLOSING) && (ev == MAN_DETECT)->
-        //     doorState = OPENING;
-        //     printf("door=OPENING\n");
+        ::(doorState == CLOSING) && (ev == MAN_DETECT)->
+            doorState = OPENING;
+            printf("door=OPENING\n");
         ::else ->
         fi
         //システムの状態遷移が終わった段階で状態をチェック
@@ -54,19 +54,15 @@ active proctype Env() {
     od
 }
 
-// never  {    /* !([](p -> !<>q)) */
-// T0_init:
-// 	do
-// 	:: atomic { ((p) && (q)) -> assert(!((p) && (q))) }
-// 	:: ((p)) -> goto T0_S4
-// 	:: (1) -> goto T0_init
-// 	od;
-// T0_S4:
-// 	do
-// 	:: atomic { ((q)) -> assert(!((q))) }
-// 	:: (1) -> goto T0_S4
-// 	od;
-// accept_all:
-// 	skip
-// }
+never  {    /* !([](p-><>q)) */
+T0_init:
+	do
+	:: (! ((q)) && (p)) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! ((q))) -> goto accept_S4
+	od;
+}
 
