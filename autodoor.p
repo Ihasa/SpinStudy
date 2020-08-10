@@ -52,11 +52,11 @@ active proctype Env() {
         :: c ! MAN_DETECT;envState=PASSING;printf("env=PASSING\n");
         fi
     ::(envState == PASSING) ->
-        c ! MAN_DETECT;
-        c ! TIME_SPEND;
         if
         :: envState = PASSED;printf("env=PASSED\n");
-        :: else ->
+        ::
+            c ! MAN_DETECT;
+            c ! TIME_SPEND;
         fi
     od
 }
