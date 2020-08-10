@@ -1,7 +1,11 @@
 include makeconf.txt
 
 all:
+ifdef ltl
+	$(SPIN) -a -f '!($(ltl))' autodoor.p
+else
 	$(SPIN) -a autodoor.p
+endif
 	gcc pan.c -o pan
 	./pan.exe -a
 
