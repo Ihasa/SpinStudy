@@ -2,9 +2,9 @@ include makeconf.txt
 
 all:
 ifdef ltl
-	$(SPIN) -a -f '!($(ltl))' autodoor.p
+	$(SPIN) -a -f '!($(ltl))' $(SRC)
 else
-	$(SPIN) -a autodoor.p
+	$(SPIN) -a $(SRC)
 endif
 	gcc pan.c -o pan
 	./pan.exe -a
@@ -17,4 +17,4 @@ else
 endif
 
 cex:
-	$(SPIN) -t -c autodoor.p > result.txt
+	$(SPIN) -t -c $(SRC) > result.txt
